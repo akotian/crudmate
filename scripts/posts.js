@@ -1,3 +1,8 @@
+var posts = [
+  {'id': 1, 'title': 'My first post', 'description': 'My first description'},
+  {'id': 2, 'title': 'My second post', 'description': 'My second description'}
+]
+
 var Post= React.createClass({
   render: function() {
     return (
@@ -25,10 +30,15 @@ var PostForm = React.createClass({
 
 var PostList = React.createClass({
   render: function() {
+    var postNodes = this.props.data.map(function(post) {
+      return (
+        <Post title={post.title} description={post.description} key={post.id} />
+      );
+
+    });
     return (
       <div className="postList">
-        <Post title="Post 1" description="This is post 1" />
-        <Post title="Post 2" description="This is post 2" />
+        {postNodes}
       </div>
     );
   }
@@ -40,13 +50,13 @@ var PostBox = React.createClass({
       <div className="postBox">
         <PostForm />
         <h1>Posts</h1>
-        <PostList />
+        <PostList data={this.props.data} />
       </div>
     );
   }
 });
 
 ReactDOM.render(
-  <PostBox />,
+  <PostBox data={posts} />,
   document.getElementById('content')
 );
