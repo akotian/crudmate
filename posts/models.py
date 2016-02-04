@@ -4,10 +4,9 @@ from django.db import models
 
 class Post(models.Model):
     title = models.CharField(max_length=300)
-    short_description = models.CharField(
-       max_length=500, blank=True)
-    # long_description
-    # repo_url
+    description = models.TextField(
+       blank=True)
+    repo_url = models.URLField(blank=True)
     # author
     # interested_users
     # active_users
