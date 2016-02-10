@@ -1,16 +1,31 @@
 var Post= React.createClass({
   render: function() {
     return (
-      <div className="post">
-        <span className="postTitle">
-          {this.props.title}
-        </span>
-        <span className="postDescription">
-          {this.props.description}
-        </span>
-        <span className="postDescription">
-          {this.props.repo_url}
-        </span>
+      <div className="post row">
+        <div className="col-md-3 col-xs-3">
+          <div className="">
+            <a href="#" className="thumbnail">
+              <img src={this.props.profile_image} alt="Profile Image" />
+            </a>
+           </div>
+        </div>
+        <div className="col-md-9 col-xs-9">
+          <div className="row">
+            <strong>author</strong>
+          </div>
+          <div className="row">
+            {this.props.title}
+          </div>
+          <div className="row">
+            {this.props.description}
+          </div>
+          <div className="row">
+            <div className="col-md-3 col-xs-3">Repo</div>
+            <div className="col-md-9 col-xs-9">
+              <a href="{this.props.repo_url}">{this.props.repo_url}</a>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -46,16 +61,16 @@ var PostForm = React.createClass({
   },
   render: function() {
     return (
-      <div className="postForm">
-      <form className="postForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Title"
-          value={this.state.title} onChange={this.handleTitleChange} />
-        <input type="text" placeholder="Description"
-          value={this.state.description} onChange={this.handleDescriptionChange} />
-        <input type="text" placeholder="Repo Url"
-          value={this.state.repo_url} onChange={this.handleRepoUrlChange} />
-        <input type="submit" value="Post" />
-      </form>
+      <div className="post-form">
+        <form className="" onSubmit={this.handleSubmit}>
+          <input type="text" placeholder="Title"
+            value={this.state.title} onChange={this.handleTitleChange} />
+          <input type="text" placeholder="Description"
+            value={this.state.description} onChange={this.handleDescriptionChange} />
+          <input type="text" placeholder="Repo Url"
+            value={this.state.repo_url} onChange={this.handleRepoUrlChange} />
+          <input type="submit" value="Post" />
+        </form>
       </div>
     );
   }
@@ -65,12 +80,12 @@ var PostList = React.createClass({
   render: function() {
     var postNodes = this.props.data.map(function(post) {
       return (
-        <Post title={post.title} description={post.description} key={post.id} repo_url={post.repo_url} />
+        <Post title={post.title} description={post.description} key={post.id} repo_url={post.repo_url} profile_image={post.profile_image} />
       );
     });
 
     return (
-      <div className="postList">
+      <div className="post-list">
         {postNodes}
       </div>
     );
@@ -121,7 +136,6 @@ var PostBox = React.createClass({
     return (
       <div className="postBox">
         <PostForm onPostSubmit={this.handlePostSubmit} />
-        <h1>Posts</h1>
         <PostList data={this.state.data} />
       </div>
     );
