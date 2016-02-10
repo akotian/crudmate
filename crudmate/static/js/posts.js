@@ -62,14 +62,22 @@ var PostForm = React.createClass({
   render: function() {
     return (
       <div className="post-form">
-        <form className="" onSubmit={this.handleSubmit}>
-          <input type="text" placeholder="Title"
-            value={this.state.title} onChange={this.handleTitleChange} />
-          <input type="text" placeholder="Description"
-            value={this.state.description} onChange={this.handleDescriptionChange} />
-          <input type="text" placeholder="Repo Url"
-            value={this.state.repo_url} onChange={this.handleRepoUrlChange} />
-          <input type="submit" value="Post" />
+        <form className="post-form" onSubmit={this.handleSubmit}>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Title"
+               aria-describedby="sizing-addon2" value={this.state.title}
+               onChange={this.handleTitleChange} />
+          </div>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Description"
+               aria-describedby="sizing-addon2" value={this.state.description}
+               onChange={this.handleDescriptionChange} />
+          </div>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Repository Url"
+               aria-describedby="sizing-addon2" value={this.state.repo_url}
+               onChange={this.handleRepoUrlChange} />
+          </div>
         </form>
       </div>
     );
