@@ -31,10 +31,21 @@ var Post= React.createClass({
   }
 });
 
+var NewPost = React.createClass({
+  render: function () {
+    return (
+      <div className="post-form">
+        <input type="text" placeholder="Submit New Project"
+        onClick={this.props.onInputClicked} />
+      </div>
+    );
+  }
+});
+
 var PostForm = React.createClass({
   getInitialState: function() {
     return {title: '', description: '',
-            reop_url: ''};
+            repo_url: ''};
 
   },
   handleTitleChange: function(e) {
@@ -52,6 +63,7 @@ var PostForm = React.createClass({
     var description = this.state.description.trim();
     var repo_url = this.state.repo_url.trim();
     if (!title) {
+      alert("Please provide a title");
       return;
     }
     this.props.onPostSubmit(
@@ -62,21 +74,31 @@ var PostForm = React.createClass({
   render: function() {
     return (
       <div className="post-form">
-        <form className="post-form" onSubmit={this.handleSubmit}>
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Title"
+        <form onSubmit={this.handleSubmit}>
+          <div className="input-group">
+            <input type="text" className="form-control" placeholder="Title"
                aria-describedby="sizing-addon2" value={this.state.title}
                onChange={this.handleTitleChange} />
           </div>
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Description"
+          <div className="input-group">
+            <input type="text" className="form-control" placeholder="Description"
                aria-describedby="sizing-addon2" value={this.state.description}
                onChange={this.handleDescriptionChange} />
           </div>
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Repository Url"
+          <div className="input-group">
+            <input type="text" className="form-control" placeholder="Repository Url"
                aria-describedby="sizing-addon2" value={this.state.repo_url}
                onChange={this.handleRepoUrlChange} />
+          </div>
+          <div className="btn-group row">
+            <div className="col-md-6 col-xs-6">
+              <button type="submit" className="btn btn-success">Submit</button>
+            </div>
+            <div className="col-md-6 col-xs-6">
+              <button type="button" className="btn btn-danger" onClick={this.props.onCancelClicked}>
+                Cancel
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -115,7 +137,7 @@ var PostBox = React.createClass({
     });
   },
   getInitialState: function() {
-    return {data: []};
+    return {data: [], newSubmission: false};
   },
   componentDidMount: function() {
     this.loadPostsFromServer();
@@ -133,6 +155,7 @@ var PostBox = React.createClass({
       data: post,
       success: function(newPost) {
         this.setState({data: posts.concat(newPost)});
+        this.togglePostForm();
       }.bind(this),
       error: function(xhr, status, err) {
         this.setState({data: posts});
@@ -140,11 +163,16 @@ var PostBox = React.createClass({
         }.bind(this)
     });
   },
+  togglePostForm: function() {
+    this.setState({ newSubmission: !this.state.newSubmission});
+  },
   render: function() {
     return (
       <div className="postBox">
-        <PostForm onPostSubmit={this.handlePostSubmit} />
-        <PostList data={this.state.data} />
+        {this.state.newSubmission ?
+          <PostForm onPostSubmit={this.handlePostSubmit} onCancelClicked={this.togglePostForm} /> :
+          <NewPost onInputClicked={this.togglePostForm} /> }
+        {this.state.newSubmission ? null : <PostList data={this.state.data} /> }
       </div>
     );
   }
