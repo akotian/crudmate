@@ -1,7 +1,27 @@
 var Post= React.createClass({
+  getInitialState: function() {
+    return {is_deleted: false};
+  },
+  handlePostDelete: function() {
+    $.ajax({
+      url: this.props.url + this.props.post_id,
+      dataType: 'json',
+      type: 'DELETE',
+    }).done(function(response) {
+      this.setState({is_deleted: true});
+    }.bind(this))
+    .fail(function(xhr, status, err) {
+      alert("Could not delete component");
+    }.bind(this));
+  },
   render: function() {
+    var Styles = {
+      isDeleted : {
+        display: 'none'
+      },
+    };
     return (
-      <div className="post row">
+      <div className="post row" style={this.state.is_deleted ? Styles.isDeleted : {}}>
         <div className="col-md-3 col-xs-3">
           <div className="">
             <a href="#" className="thumbnail">
@@ -11,7 +31,14 @@ var Post= React.createClass({
         </div>
         <div className="col-md-9 col-xs-9">
           <div className="row">
-            <strong>author</strong>
+            <div className="col-md-10 col-xs-10">
+              <strong>author{this.props.key}</strong>
+            </div>
+            <div className="col-md-2 col-xs-2">
+              <span className="glyphicon glyphicon-remove"
+                aria-hidden="true" onClick={this.handlePostDelete}>
+              </span>
+            </div>
           </div>
           <div className="row">
             {this.props.title}
@@ -108,9 +135,14 @@ var PostForm = React.createClass({
 
 var PostList = React.createClass({
   render: function() {
+    var url = this.props.url;
     var postNodes = this.props.data.map(function(post) {
       return (
-        <Post title={post.title} description={post.description} key={post.id} repo_url={post.repo_url} profile_image={post.profile_image} />
+        <Post title={post.title} description={post.description}
+          key={post.id} repo_url={post.repo_url}
+          profile_image={post.profile_image}
+          post_id={post.id}
+          url={url} />
       );
     });
 
@@ -127,14 +159,13 @@ var PostBox = React.createClass({
     $.ajax({
       url: this.props.url,
       dataType: 'json',
-      cache: false,
-      success: function(data) {
+      cache: false
+    }).done(function(data) {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+    }.bind(this))
+    .fail(function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-        }.bind(this)
-    });
+    }.bind(this))
   },
   getInitialState: function() {
     return {data: [], newSubmission: false};
@@ -153,15 +184,14 @@ var PostBox = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: post,
-      success: function(newPost) {
+    }).done(function(newPost) {
         this.setState({data: posts.concat(newPost)});
         this.togglePostForm();
-      }.bind(this),
-      error: function(xhr, status, err) {
+    }.bind(this))
+    .fail(function(xhr, status, err) {
         this.setState({data: posts});
         console.error(this.props.url, status, err.toString());
-        }.bind(this)
-    });
+    }.bind(this));
   },
   togglePostForm: function() {
     this.setState({ newSubmission: !this.state.newSubmission});
@@ -172,7 +202,9 @@ var PostBox = React.createClass({
         {this.state.newSubmission ?
           <PostForm onPostSubmit={this.handlePostSubmit} onCancelClicked={this.togglePostForm} /> :
           <NewPost onInputClicked={this.togglePostForm} /> }
-        {this.state.newSubmission ? null : <PostList data={this.state.data} /> }
+        {this.state.newSubmission ?
+          null :
+          <PostList data={this.state.data} url={this.props.url} /> }
       </div>
     );
   }
